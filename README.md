@@ -48,5 +48,4 @@ project/
 │   └── update.html
 │
 ├── main.py
-├── requirements.txt
 └── README.md

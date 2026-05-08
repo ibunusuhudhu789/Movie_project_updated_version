@@ -68,9 +68,10 @@ def add():
     return render_template("add.html", movies=form)
 
 
-@app.route("/edit/<int:key>", methods=["GET", "POST"])
-def edit(key):
+@app.route("/edit", methods=["GET", "POST"])
+def edit():
     if request.method == "POST":
+        movie_id = request.args.get("key")
         global title
         params = {
             "s": title
@@ -78,21 +79,20 @@ def edit(key):
         response = requests.get(url, params=params)
         response.raise_for_status()
         data = response.json()
-        title = data["Search"][key]["Title"]
+        title = data["Search"][int(movie_id)]["Title"]
         rating = request.form["rating"]
         review = request.form["review"]
         description = request.form["description"]
-        year = data["Search"][key]["Year"]
-        image = data["Search"][key]["Poster"]
+        year = data["Search"][int(movie_id)]["Year"]
+        image = data["Search"][int(movie_id)]["Poster"]
         add_movie = Movie(title=title, year=year, rating=rating, description=description, review=review, image=image)
         db.session.add(add_movie)
         db.session.commit()
         return redirect(url_for("home"))
+    movie_id = request.args.get("key")
     form = MovieForm()
-    return render_template("edit.html", movies=form, i=key)
+    return render_template("edit.html", movies=form, key=movie_id)
 
-
-# TODO: Update and delete the rating if wanted to.
 
 @app.route("/update/<int:key>", methods=["GET", "POST"])
 def update(key):
