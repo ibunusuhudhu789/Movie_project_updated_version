@@ -94,20 +94,22 @@ def edit():
     return render_template("edit.html", movies=form, key=movie_id)
 
 
-@app.route("/update/<int:key>", methods=["GET", "POST"])
-def update(key):
+@app.route("/update", methods=["GET", "POST"])
+def update():
     if request.method == "POST":
+        movie_id = request.args.get("key")
         rating = request.form["rating"]
         review = request.form["review"]
         description = request.form["description"]
-        selected_movie = db.session.get(Movie, key)
+        selected_movie = db.session.get(Movie, movie_id)
         selected_movie.rating = rating
         selected_movie.review = review
         selected_movie.description = description
         db.session.commit()
         return redirect(url_for("home"))
+    movie_id = request.args.get("key")
     form = MovieForm()
-    return render_template("update.html", i=key, movies=form)
+    return render_template("update.html", i=movie_id, movies=form)
 
 
 @app.route("/delete/<int:key>")
